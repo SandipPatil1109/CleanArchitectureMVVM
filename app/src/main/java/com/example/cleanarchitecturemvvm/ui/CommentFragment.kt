@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.cleanarchitecturemvvm.R
 import com.example.cleanarchitecturemvvm.databinding.FragmentCommentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import retrofit2.Response
+import utils.ApiResponse
 
 @AndroidEntryPoint
 class CommentFragment : Fragment() {
@@ -33,9 +35,13 @@ class CommentFragment : Fragment() {
             commentsViewModel.getCommentData()
         }
 
-        commentsViewModel.commentLiveData.observe(viewLifecycleOwner, {
-            binding.textShowData.text = it.toString()
+        commentsViewModel.commentLiveData.observe(viewLifecycleOwner, { Response ->
 
+            when(Response){
+               is ApiResponse.Success ->{binding.textShowData.text = Response.data.toString()}
+               is ApiResponse.Failure -> {binding.textShowData.text = Response.message.toString()}
+               is ApiResponse.Loading -> {binding.textShowData.text = resources.getString(R.string.txtLoading)}
+            }
         })
 
     }
